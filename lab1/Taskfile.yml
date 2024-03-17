@@ -1,0 +1,21 @@
+---
+version: '3'
+tasks:
+  build:
+    cmds: [./btpc64 <./btpc64-2t.pas > ./btpc64-2t]
+  update:
+    deps: [build]
+    cmds: [./btpc64-2t <./btpc64-3t.pas > ./btpc64-3t]
+  test:
+    deps: [update]
+    cmds: [./btpc64-3t <./hello.pas > ./hello, ./hello]
+  test-feature:
+    deps: [update]
+    cmds: [./btpc64-3t <./feature.pas > ./feature, ./feature]
+  diff:
+    cmds: [diff -u btpc64.pas btpc64-2t.pas]
+  diff-second:
+    cmds: [diff -u btpc64.pas btpc64-3t.pas]
+  report:
+    cmd: pandoc --pdf-engine=xelatex -V 'mainfont:Liberation Serif' -V 'monofont:Liberation
+      Mono' report.md -o report.pdf
