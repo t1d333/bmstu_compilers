@@ -1,0 +1,3 @@
+/do/ /abcd/ /while/ /end/ /abcd1/
+abcd /abcd312/
+// test abcd

@@ -32,7 +32,7 @@ func NewAutomata() Automata {
 			/*     state 9      */ {12, 12, 12, 12, 12, -1, 10, 12, 12, 12, -1},
 			/*     state 10     */ {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 			/*     state 11     */ {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-			/*     state 12     */ {12, 12, 12, 12, -1, -1, 11, 12, 12, 12, 12},
+			/*     state 12     */ {12, 12, 12, 12, -1, -1, 11, 12, 12, 12, -1},
 			/*     state 13     */ {-1, -1, -1, -1, -1, -1, -1, -1, 13, -1, -1},
 			/*     state 14     */ {5, 8, 8, 8, 8, -1, -1, 8, 8, -1, -1},
 		},
@@ -88,7 +88,7 @@ func (a *LexerAutomata) MakeTransition(state int, c rune) int {
 		return a.table[state][7]
 	case unicode.IsDigit(c):
 		return a.table[state][8]
-	case unicode.IsSpace(c) && c != ' ' :
+	case unicode.IsGraphic(c) && c != '\n' :
 		return a.table[state][9]
 	default:
 		return a.table[state][10]

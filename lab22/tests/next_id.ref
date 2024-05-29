@@ -1,0 +1,9 @@
+/* Функция возвращает уникальные идентификаторы с заданным префиксом */
+NextId {
+  e.prefix
+    , <Dg counter>
+    : {
+        s.n = e.prefix <Symb s.n> <Br counter '=' <Add 1 s.n>>;
+        /* пусто */ = <Br counter '=' 0> <NextId e.prefix>;
+      };
+}

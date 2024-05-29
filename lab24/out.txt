@@ -1,0 +1,1 @@
+./build/syntax_analyzer/analyzer/analyzer

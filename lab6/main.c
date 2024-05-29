@@ -9,13 +9,13 @@ enum DOMAIN {
   COMMENT,
 };
 
-void yy_scan_string(char *program);
+// void yy_scan_string(char *program);
 
 struct Position {
   int line, pos, index;
 };
 
-void print_pos(struct Position *p) { printf("(% d ,% d )", p->line, p->pos); }
+void print_pos(struct Position *p) { printf("(%d, %d)", p->line, p->pos); }
 
 struct Fragment {
   struct Position starting, following;
@@ -31,6 +31,30 @@ void print_frag(struct Fragment f) {
   printf(" -");
   print_pos(&(f.following));
 }
+
+union Token {
+  char *ident;
+};
+
+#define YY_USER_ACTION                                                         \
+  {                                                                            \
+    int i;                                                                     \
+    if (!continued)                                                            \
+      yylloc->starting = cur;                                                  \
+    continued = 0;                                                             \
+    for (i = 0; i < yyleng; i++) {                                             \
+      if (yytext[i] == '\n') {                                                 \
+        ++cur.line;                                                            \
+        cur.pos = 1;                                                           \
+      } else {                                                                 \
+        ++cur.pos;                                                             \
+      }                                                                        \
+      ++cur.index;                                                             \
+    }                                                                          \
+    yylloc->following = cur;                                                   \
+  }
+
+typedef union Token YYSTYPE;
 
 void init_scanner(char *program) {
   continued = 0;

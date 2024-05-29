@@ -2,16 +2,24 @@
 
 
 %{
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define IDENT_ARRAY_SIZE 1024
-#define MAX_IDENT_SIZE 64
-char* IDENT_ARRAY[IDENT_ARRAY_SIZE];
-size_t len = 0;
+#define MAX_IDENT_SIZE 128
+#define ERR_ARRAY_SIZE 1024
 
-enum DOMAIN {
+
+#define COMMENTS_ARRAY_SIZE 1024
+
+
+
+char* ident_array[IDENT_ARRAY_SIZE];
+size_t ident_array_len = 0;
+
+enum DOMAIN_TAG {
   _EOF,
   IDENT,
   WHILE,
@@ -26,23 +34,23 @@ int add_ident(char* ident) {
   char* tmp = (char*)calloc(MAX_IDENT_SIZE, sizeof(char));
   strcpy(tmp, ident);
   
-  if (len > IDENT_ARRAY_SIZE) {
+  if (ident_array_len > IDENT_ARRAY_SIZE) {
     return -1;
   }
   
-  for (int i = 0; i < len; i++) {
-    if (strcmp(tmp, IDENT_ARRAY[i]) == 0) {
+  for (int i = 0; i < ident_array_len; i++) {
+    if (strcmp(tmp, ident_array[i]) == 0) {
       return i;
     }
   }
   
-  IDENT_ARRAY[len] = tmp;
-  return len++;
+  ident_array[ident_array_len] = tmp;
+  return ident_array_len++;
 }
 
 int find_ident(char* ident) {
-  for (int i = 0; i < len; i++) {
-    if (strcmp(ident, IDENT_ARRAY[i]) == 0) {
+  for (int i = 0; i < ident_array_len; i++) {
+    if (strcmp(ident, ident_array[i]) == 0) {
       return i;
     }
   }
@@ -50,7 +58,7 @@ int find_ident(char* ident) {
   return -1;
 }
 
-char* tag_to_str(enum DOMAIN d) {
+char* tag_to_str(enum DOMAIN_TAG d) {
   switch (d)
   {
     case _EOF:
@@ -88,6 +96,9 @@ typedef struct Fragment YYLTYPE;
 int continued;
 struct Position cur;
 
+struct Fragment comments[COMMENTS_ARRAY_SIZE];
+size_t comments_array_len = 0;
+
 void print_frag(struct Fragment f) {
   print_pos(&(f.starting));
   printf(" - ");
@@ -97,6 +108,15 @@ void print_frag(struct Fragment f) {
 union Token {
   int ident;
 };
+
+struct ErrorMsg {
+  char* msg;
+  struct Position pos;
+};
+
+struct ErrorMsg errors[ERR_ARRAY_SIZE];
+size_t errors_array_len = 0;
+
 
 #define YY_USER_ACTION                                                         \
   {                                                                            \
@@ -136,33 +156,42 @@ void err(char *msg) {
 
 letter [a-zA-Z]
 digit [0-9]
-ident {letter}+
+ident \/[^\/]+\/
 number {digit}*
-comment \/\/\.*\n
+comment \/\/.*\n
+while "\/while\/"
+do "\/do\/"
+end "\/end\/"
 
 %%
 
 [\n\t ]+
 
-"\/while\/"  {
+{while}  {
               return WHILE;
              }
-
-"\/do\/"     {
+{do}     {
               return DO;
              }
-"\/end\/"    {
+{end}    {
               return END;
              }
 {number}     {
               return NUMBER;
              }
 {comment}    {
+              if (comments_array_len > COMMENTS_ARRAY_SIZE) {
+                return COMMENT;
+              }
+              comments[comments_array_len++] = (struct Fragment){.starting = yylloc->starting, .following = yylloc->following};
               return COMMENT;
              }
 {ident}      {
               yylval->ident = add_ident(yytext);
               return IDENT;
+             }
+.            {
+               errors[errors_array_len++] = (struct ErrorMsg){.msg = "undefined character", .pos = yylloc->starting};
              }
 <<EOF>>      {
               return 0;
@@ -170,10 +199,22 @@ comment \/\/\.*\n
 %%
 
 
+
+void yyerror (YYLTYPE *locp, char const *msg) {
+  fprintf(stderr, "SYNTAX ERROR\n");
+}
+
 int main() {
+  
   YYSTYPE value;
   YYLTYPE coords;
   int tag;
+
+  // init current pos
+  
+  cur.line = 1;
+  cur.pos = 1;
+  cur.index = 0;
   
   do 
   {
@@ -186,7 +227,29 @@ int main() {
       printf("\n");
     }
   }
+
   while (tag);
+ 
+
+  printf("\nIDENTIFIERS:\n");
+  
+  for (int i = 0; i < ident_array_len; ++i) {
+    printf("%d: %s\n", i, ident_array[i]);
+  } 
+  
+  printf("\nERRORS:\n");
+
+  for (int i = 0; i < errors_array_len; ++i) {
+    printf("%s ", errors[i].msg);
+    print_pos(&errors[i].pos);
+    printf("\n");
+  }
+  
+  printf("\nCOMMENTS:\n");
+  
+  for (int i = 0; i < comments_array_len; ++i) {
+    print_frag(comments[i]);
+  } 
   
   return 0;
 }

@@ -1,0 +1,151 @@
+{
+	"functions": [
+		{
+			"type": "func",
+			"ident": "Inc",
+			"body": {
+				"type": "func_body",
+				"sentencies": [
+					{
+						"type": "sentence",
+						"lhs": {
+							"type": "sentence_lhs",
+							"pattern": {
+								"type": "pattern",
+								"parts": [
+									{
+										"type": "var",
+										"name": "e.Prefix"
+									},
+									{
+										"type": "var",
+										"name": "s.Last"
+									}
+								]
+							},
+							"conditions": [
+								{
+									"type": "condition",
+									"pattern": {
+										"type": "pattern",
+										"parts": [
+											{
+												"type": "var",
+												"name": "e.1"
+											},
+											{
+												"type": "var",
+												"name": "s.Last"
+											},
+											{
+												"type": "var",
+												"name": "s.Next"
+											},
+											{
+												"type": "var",
+												"name": "e.2"
+											}
+										]
+									},
+									"result": {
+										"type": "result",
+										"parts": [
+											{
+												"type": "string",
+												"value": "'0123456789'"
+											}
+										]
+									}
+								}
+							]
+						},
+						"rhs": {
+							"type": "sentence_rhs_result",
+							"result": {
+								"type": "result",
+								"parts": [
+									{
+										"type": "var",
+										"name": "e.Prefix"
+									},
+									{
+										"type": "var",
+										"name": "s.Next"
+									}
+								]
+							}
+						}
+					},
+					{
+						"type": "sentence",
+						"lhs": {
+							"type": "sentence_lhs",
+							"pattern": {
+								"type": "pattern",
+								"parts": [
+									{
+										"type": "var",
+										"name": "e.Prefix"
+									},
+									{
+										"type": "string",
+										"value": "'9'"
+									}
+								]
+							},
+							"conditions": []
+						},
+						"rhs": {
+							"type": "sentence_rhs_result",
+							"result": {
+								"type": "result",
+								"parts": [
+									{
+										"type": "func_call",
+										"ident": "Inc",
+										"result": {
+											"type": "result",
+											"parts": [
+												{
+													"type": "var",
+													"name": "e.Prefix"
+												}
+											]
+										}
+									},
+									{
+										"type": "string",
+										"value": "'0'"
+									}
+								]
+							}
+						}
+					},
+					{
+						"type": "sentence",
+						"lhs": {
+							"type": "sentence_lhs",
+							"pattern": {
+								"type": "pattern",
+								"parts": []
+							},
+							"conditions": []
+						},
+						"rhs": {
+							"type": "sentence_rhs_result",
+							"result": {
+								"type": "result",
+								"parts": [
+									{
+										"type": "string",
+										"value": "'1'"
+									}
+								]
+							}
+						}
+					}
+				]
+			}
+		}
+	]
+}

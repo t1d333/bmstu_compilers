@@ -1,0 +1,9 @@
+CartProd {
+  (t.X e.X) (e.Y) = <CartProd-Bind t.X e.Y> <CartProd (e.X) (e.Y)>;
+  (/* пусто */) (e.Y) = /* пусто */;
+}
+
+CartProd-Bind {
+  t.X t.Y e.Y = (t.X t.Y) <CartProd-Bind t.X e.Y>;
+  t.X /* пусто */ = /* пусто */;
+}

@@ -1,0 +1,15 @@
+tokens <plussign>, <star>, <n>.
+<E>  is <T> <E1>.
+<INITIAL>{comment_start}  {
+                            BEGIN(COMMENT);
+                            return DomainTag::COMMENT_START;
+                          }
+<COMMENT>{comment_end}    {
+                            BEGIN(INITIAL);
+                            return DomainTag::COMMENT_END;
+                          }
+<COMMENT>{comment_inner}  {
+                            return DomainTag::COMMENT_INNER;
+                          }
+
+
