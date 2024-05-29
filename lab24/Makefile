@@ -18,9 +18,7 @@ build: build-flex clean
 	mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake  --build .
 
 run:
-	./build/syntax_analyzer/analyzer/analyzer
-
-
+	./build/syntax_analyzer/analyzer/analyzer-d
 
 clean:
 	rm -rf build
